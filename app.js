@@ -17,25 +17,38 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Index Page
-app.get("/", (req, res) => {
-  if (req.isAuthenticated()) {
-    const { is_member, is_admin, first_name } = req.user;
-
-    res.render("index", {
-      user: req.user,
-      isAuthenticated: true,
-      isAdmin: is_admin || false,
-      isMember: is_member || false,
-      firstName: first_name || "Guest",
-    });
-  } else {
-    res.render("index", {
-      isAuthenticated: false,
-      isAdmin: false,
-      isMember: false,
-    });
-  }
-});
+app.get("/", async (req, res) => {
+    try {
+      const messages = await pool.query(
+        `SELECT messages.*, users.first_name, users.last_name 
+         FROM messages 
+         JOIN users ON messages.user_id = users.id`
+      );
+  
+      if (req.isAuthenticated()) {
+        const { is_member, is_admin, first_name } = req.user;
+  
+        res.render("index", {
+          user: req.user,
+          isAuthenticated: true,
+          isAdmin: is_admin || false,
+          isMember: is_member || false,
+          firstName: first_name || "Guest",
+          messages: messages.rows,
+        });
+      } else {
+        res.render("index", {
+          isAuthenticated: false,
+          isAdmin: false,
+          isMember: false,
+          messages: messages.rows,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error loading messages.");
+    }
+  });
 
 // Sign-Up Page
 app.get("/sign-up", (req, res) => res.render("sign-up-form"));
@@ -161,6 +174,34 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   }
 });
+
+// Render New Message Form
+app.get("/new-message", (req, res) => {
+    if (!req.isAuthenticated() || !req.user.is_member) {
+      return res.redirect("/login");
+    }
+    res.render("new-message-form");
+  });
+  
+  // Handle New Message Submission
+  app.post("/new-message", async (req, res) => {
+    if (!req.isAuthenticated() || !req.user.is_member) {
+      return res.redirect("/login");
+    }
+  
+    try {
+      const { title, text } = req.body;
+      await pool.query(
+        "INSERT INTO messages (title, text, user_id) VALUES ($1, $2, $3)",
+        [title, text, req.user.id]
+      );
+  
+      res.redirect("/");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error saving message.");
+    }
+  });
 
 // Logout
 app.get("/logout", (req, res, next) => {

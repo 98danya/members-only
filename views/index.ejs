@@ -6,6 +6,7 @@
   <title>Home</title>
 </head>
 <body>
+
   <% if (isAuthenticated) { %>
     <h1>Welcome, <%= firstName %>!</h1>
 
@@ -13,6 +14,7 @@
       <p>You are an admin. You have special permissions!</p>
     <% } else if (isMember) { %>
       <p>Welcome to the club! You're a member.</p>
+      <a href="/new-message">Create a New Message</a>
     <% } else { %>
       <p>You are logged in but not yet a member. Please join the club!</p>
     <% } %>
@@ -23,5 +25,28 @@
     <a href="/login">Log In</a>
     <a href="/sign-up">Sign Up</a>
   <% } %>
+
+  <h2>Messages</h2>
+
+  <% if (messages.length > 0) { %>
+    <% messages.forEach(message => { %>
+      <div>
+        <h3><%= message.title %></h3>
+        <p><%= message.text %></p>
+
+        <% if (isMember) { %>
+          <p><strong>By:</strong> <%= message.first_name %> <%= message.last_name %></p>
+          <% if (message.timestamp) { %>
+            <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
+          <% } %>
+        <% } %>
+
+      </div>
+      <hr>
+    <% }); %>
+  <% } else { %>
+    <p>No messages yet. Be the first to post!</p>
+  <% } %>
+
 </body>
 </html>
