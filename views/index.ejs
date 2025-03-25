@@ -14,12 +14,14 @@
       <p>You are an admin. You have special permissions!</p>
     <% } else if (isMember) { %>
       <p>Welcome to the club! You're a member.</p>
-      <a href="/new-message">Create a New Message</a>
     <% } else { %>
       <p>You are logged in but not yet a member. Please join the club!</p>
+      <a href="/join-club">Join the Club</a> 
     <% } %>
 
+    <a href="/new-message">Create a New Message</a>
     <a href="/logout">Log Out</a>
+
   <% } else { %>
     <h1>Welcome to the Club! Please log in or sign up.</h1>
     <a href="/login">Log In</a>
@@ -28,17 +30,27 @@
 
   <h2>Messages</h2>
 
-  <% if (messages.length > 0) { %>
-    <% messages.forEach(message => { %>
+  <% if (messages && messages.length > 0) { %>
+    <% messages.forEach((message) => { %>
       <div>
-        <h3><%= message.title %></h3>
+        <p><strong>Title:</strong> <%= message.title %></p>
         <p><%= message.text %></p>
 
-        <% if (isMember) { %>
+        <% if (isAdmin) { %>
           <p><strong>By:</strong> <%= message.first_name %> <%= message.last_name %></p>
           <% if (message.timestamp) { %>
             <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
           <% } %>
+          <!-- Additional admin features can go here -->
+
+        <% } else if (isMember) { %>
+          <p><strong>By:</strong> <%= message.first_name %> <%= message.last_name %></p>
+          <% if (message.timestamp) { %>
+            <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
+          <% } %>
+
+        <% } else { %>
+          <p><em>Join the club to see more details!</em></p>
         <% } %>
 
       </div>
