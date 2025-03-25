@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+</head>
+<body>
+  <% if (isAuthenticated) { %>
+    <h1>Welcome, <%= firstName %>!</h1>
+
+    <% if (isAdmin) { %>
+      <p>You are an admin. You have special permissions!</p>
+    <% } else if (isMember) { %>
+      <p>Welcome to the club! You're a member.</p>
+    <% } else { %>
+      <p>You are logged in but not yet a member. Please join the club!</p>
+    <% } %>
+
+    <a href="/logout">Log Out</a>
+  <% } else { %>
+    <h1>Welcome to the Club! Please log in or sign up.</h1>
+    <a href="/login">Log In</a>
+    <a href="/sign-up">Sign Up</a>
+  <% } %>
+</body>
+</html>
