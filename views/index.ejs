@@ -37,14 +37,15 @@
         <p><%= message.text %></p>
 
         <% if (isAdmin) { %>
-          <p><strong>By:</strong> <%= message.first_name %> <%= message.last_name %></p>
+          <p><strong>By:</strong> <%= message.first_name %></p>
           <% if (message.timestamp) { %>
             <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
           <% } %>
-          <!-- Additional admin features can go here -->
-
+          <form action="/delete-message/<%= message.id %>" method="POST">
+            <button type="submit">Delete</button>
+          </form>
         <% } else if (isMember) { %>
-          <p><strong>By:</strong> <%= message.first_name %> <%= message.last_name %></p>
+          <p><strong>By:</strong> <%= message.first_name %></p>
           <% if (message.timestamp) { %>
             <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
           <% } %>

@@ -175,7 +175,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Render New Message Form
+// New Message Form
 app.get("/new-message", (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/login");
@@ -183,7 +183,6 @@ app.get("/new-message", (req, res) => {
   res.render("new-message-form");
 });
 
-// Handle New Message Submission
 app.post("/new-message", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/login");
@@ -200,6 +199,24 @@ app.post("/new-message", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error saving message.");
+  }
+});
+
+// Delete Message (Only for Admins)
+app.post("/delete-message/:id", async (req, res) => {
+  try {
+    if (!req.isAuthenticated() || !req.user.is_admin) {
+      return res.status(403).send("You don't have permission to delete messages.");
+    }
+
+    const messageId = req.params.id;
+
+    await pool.query("DELETE FROM messages WHERE id = $1", [messageId]);
+
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting message.");
   }
 });
 
