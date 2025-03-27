@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
 
   <% if (isAuthenticated) { %>
@@ -12,54 +15,78 @@
 
     <% if (isAdmin) { %>
       <p>You are an admin. You have special permissions!</p>
-    <% } else if (isMember) { %>
-      <p>Welcome to the club! You're a member.</p>
-    <% } else { %>
-      <p>You are logged in but not yet a member. Please join the club!</p>
-      <a href="/join-club">Join the Club</a> 
-    <% } %>
-
-    <a href="/new-message">Create a New Message</a>
-    <a href="/logout">Log Out</a>
-
-  <% } else { %>
-    <h1>Welcome to the Club! Please log in or sign up.</h1>
-    <a href="/login">Log In</a>
-    <a href="/sign-up">Sign Up</a>
-  <% } %>
-
-  <h2>Messages</h2>
-
-  <% if (messages && messages.length > 0) { %>
-    <% messages.forEach((message) => { %>
-      <div>
-        <p><strong>Title:</strong> <%= message.title %></p>
-        <p><%= message.text %></p>
-
-        <% if (isAdmin) { %>
-          <p><strong>By:</strong> <%= message.first_name %></p>
-          <% if (message.timestamp) { %>
-            <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
-          <% } %>
-          <form action="/delete-message/<%= message.id %>" method="POST">
-            <button type="submit">Delete</button>
-          </form>
-        <% } else if (isMember) { %>
-          <p><strong>By:</strong> <%= message.first_name %></p>
-          <% if (message.timestamp) { %>
-            <p><strong>Posted on:</strong> <%= new Date(message.timestamp).toLocaleString() %></p>
-          <% } %>
-
+      <% } else if (isMember) { %>
+        <p>Welcome to the club! You're a member.</p>
         <% } else { %>
-          <p><em>Join the club to see more details!</em></p>
-        <% } %>
+          <p>You are logged in but not yet a member. Please join the club!</p>
+          <% } %>
 
-      </div>
-      <hr>
-    <% }); %>
-  <% } else { %>
-    <p>No messages yet. Be the first to post!</p>
-  <% } %>
+            <nav class="navbar">
+              <% if (!isMember) { %>
+                <a href="/join-club" class="left-link">Join the Club</a>
+                <% } %>
+                  <div class="right-links">
+                    <a href="/new-message">Create a New Message</a>
+                    <a href="/logout">Log Out</a>
+                  </div>
+            </nav>
+
+            <% } else { %>
+              <h1>Welcome to the Club! Please log in or sign up.</h1>
+
+              <nav class="navbar">
+                <div class="right-links">
+                  <a href="/login">Log In</a>
+                  <a href="/sign-up">Sign Up</a>
+                </div>
+              </nav>
+              <% } %>
+
+                <h2>Messages</h2>
+
+                <% if (messages && messages.length> 0) { %>
+                  <% messages.forEach((message)=> { %>
+                    <div class="message-container">
+                      <p><strong>Title:</strong>
+                        <%= message.title %>
+                      </p>
+                      <p>
+                        <%= message.text %>
+                      </p>
+
+                      <% if (isAdmin) { %>
+                        <p><strong>By:</strong>
+                          <%= message.first_name %>
+                        </p>
+                        <% if (message.timestamp) { %>
+                          <p><strong>Posted on:</strong>
+                            <%= new Date(message.timestamp).toLocaleString() %>
+                          </p>
+                          <% } %>
+                            <form action="/delete-message/<%= message.id %>" method="POST">
+                              <button class="delete-button" type="submit">Delete</button>
+                            </form>
+                            <% } else if (isMember) { %>
+                              <p><strong>By:</strong>
+                                <%= message.first_name %>
+                              </p>
+                              <% if (message.timestamp) { %>
+                                <p><strong>Posted on:</strong>
+                                  <%= new Date(message.timestamp).toLocaleString() %>
+                                </p>
+                                <% } %>
+
+                                  <% } else { %>
+                                    <p><em>Join the club to see more details!</em></p>
+                                    <% } %>
+
+                    </div>
+
+                    <% }); %>
+                      <% } else { %>
+                        <p>No messages yet. Be the first to post!</p>
+                        <% } %>
 
 </body>
+
 </html>
